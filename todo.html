@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <style>
+        /* body  */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            background: url('back.jpg') no-repeat center center/cover;
+        }
+
+        /* Header */
+        .header-container {
+            background-color: #101010; 
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .header-container h1 {
+            margin: 0;
+            font-size: 3em;
+        }
+
+        .header-container p {
+            margin-top: 10px;
+            font-size: 1.2em;
+            font-weight: 300;
+        }
+
+        /* Container */
+        .container {
+            width: 60%;
+            max-width: 1000px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Container  */
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px; /* Reduced space between sections */
+        }
+
+        /* Input and Select */
+        .form-container input, .form-container select, .search-container input, .search-container select {
+            padding: 12px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 83%;
+            box-sizing: border-box; 
+        }
+
+        /* Search Container  */
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Ensures elements are vertically centered */
+            margin-bottom: 15px;
+        }
+
+        .search-container input,
+        .search-container select,
+        .search-container button {
+            padding: 12px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-container input,
+        .search-container select {
+            width: 40.8%; 
+        }
+
+        .search-container button {
+            width: 15%; 
+            background-color: #4CAF50; /* Green */
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background-color: #316f34; 
+        }
+
+        /* Form Container Button  */
+        .form-container button, .clear-button {
+            background-color: #4CAF50; 
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-container button:hover, .clear-button:hover {
+            background-color: #45a049; /* Slightly darker green */
+        }
+
+        /* Todo List  */
+        #todoList {
+            margin-top: 10px; /* Reduced space between todo list and the search section */
+        }
+
+        .todo-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .todo-item.complete {
+            background-color: #d4edda;
+            text-decoration: line-through;
+        }
+
+        .todo-item.incomplete {
+            background-color: #f8d7da;
+        }
+
+        .todo-item button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        p{
+            margin: 20px;
+        }
+
+        .todo-item button:hover {
+            background-color: #45a049;
+        }
+
+        /* Clear Button */
+        .clear-button {
+            display: block;
+            width: 100%;
+            margin-top: 10px; 
+            background-color: #e74c3c;
+            padding: 12px;
+            font-size: 1.2em;
+        }
+
+        .clear-button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-container, .search-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .form-container input, .form-container select, .search-container input, .search-container select {
+                width: 100%; 
+                margin-bottom: 10px;
+            }
+
+            .form-container button, .search-container button {
+                width: 100%; 
+            }
+        }
+
+        @keyframes vanishAndRotate {
+            0% {
+                opacity: 1;
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: rotate(180deg) scale(0.8);
+            }
+            100% {
+                opacity: 0;
+                transform: rotate(360deg) scale(0);
+            }
+        }
+
+        
+        .vanishing {
+            animation: vanishAndRotate 0.5s forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <div class="header-container">
+        <h1>Todo App</h1>
+        <p>Stay organized, achieve more—transform your to-do list into a productivity powerhouse!</p>
+    </div>
+
+    
+    <div class="container">
+        <!-- Form  -->
+        <div class="form-container">
+            <input type="text" id="todoName" placeholder="Enter task" />
+            <button onclick="addTodo()">Add Task</button>
+        </div>
+
+        <!-- Search  -->
+        <div class="search-container">
+            <input type="text" id="searchName" placeholder="Search todos by name" />
+            <select id="searchStatus">
+                <option value="">All Status</option>
+                <option value="complete">Complete</option>
+                <option value="incomplete">Incomplete</option>
+            </select>
+            <button onclick="searchTodos()">Search</button>
+        </div>
+
+      
+        <div id="todoList">
+            <!-- task -->
+        </div>
+
+        <button class="clear-button" onclick="clearAllTodos()">Clear All</button>
+
+        
+        <center><div id="todoCount">
+            <p >Total Todos: <span id="totalTodos">0</span> | Completed: <span id="completedTodos">0</span></p>
+        </div></center>
+    </div>
+
+    <script>
+        // Initialize todos from localStorage
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+        // Function to add a new todo
+        function addTodo() {
+            const todoName = document.getElementById('todoName').value;
+            if (todoName) {
+                const todo = { name: todoName, status: 'incomplete' };
+                todos.push(todo);
+                updateTodoList();
+                localStorage.setItem('todos', JSON.stringify(todos));
+                document.getElementById('todoName').value = ''; 
+            }
+        }
+
+        // Function to render todo list
+        function updateTodoList(filteredTodos = todos) {
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = ''; 
+            filteredTodos.forEach((todo, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.classList.add('todo-item');
+                todoItem.classList.add(todo.status);
+                todoItem.innerHTML = `
+                    <span>${todo.name}</span>
+                    <div>
+                        <button onclick="markComplete(${index})">${todo.status === 'incomplete' ? 'Complete' : 'Undo'}</button>
+                        <button onclick="deleteTodo(${index})">Delete</button>
+                    </div>
+                `;
+                todoList.appendChild(todoItem);
+            });
+            updateTodoCount();
+        }
+
+        // Function to mark a todo as complete or incomplete
+        function markComplete(index) {
+            todos[index].status = todos[index].status === 'complete' ? 'incomplete' : 'complete';
+            localStorage.setItem('todos', JSON.stringify(todos));
+            updateTodoList();
+        }
+
+        // Function to delete a todo with animation
+        function deleteTodo(index) {
+            const todoItems = document.querySelectorAll('.todo-item');
+            const todoItem = todoItems[index];
+
+           
+            todoItem.classList.add('vanishing');
+
+            
+            setTimeout(() => {
+                todos.splice(index, 1);
+                localStorage.setItem('todos', JSON.stringify(todos));
+                updateTodoList();
+            }, 500); 
+        }
+
+        // Function to clear all todos
+        function clearAllTodos() {
+            todos = [];
+            localStorage.setItem('todos', JSON.stringify(todos));
+            updateTodoList();
+        }
+
+        // Function to search todos based on name and status
+        function searchTodos() {
+            const searchName = document.getElementById('searchName').value.toLowerCase();
+            const searchStatus = document.getElementById('searchStatus').value;
+            let filteredTodos;
+
+            if (searchStatus === "complete") {
+                // completed tasks
+                filteredTodos = todos.filter(todo => 
+                    todo.name.toLowerCase().includes(searchName) && todo.status === "complete");
+            } else if (searchStatus === "incomplete") {
+                // incompleted tasks
+                filteredTodos = todos.filter(todo => 
+                    todo.name.toLowerCase().includes(searchName) && todo.status === "incomplete");
+            } else {
+                // all tasks
+                filteredTodos = todos.filter(todo => 
+                    todo.name.toLowerCase().includes(searchName));
+            }
+
+            if (filteredTodos.length === 0) {
+                alert("No task found");
+            } else {
+                updateTodoList(filteredTodos);
+            }
+        }
+
+        // Function to update todo count
+        function updateTodoCount() {
+            const totalTodosCount = todos.length;
+            const completedTodosCount = todos.filter(todo => todo.status === 'complete').length;
+            document.getElementById('totalTodos').textContent = totalTodosCount;
+            document.getElementById('completedTodos').textContent = completedTodosCount;
+        }
+
+        // Initial call to update todo list and count on page load
+        updateTodoList();
+    </script>
+</body>
+</html>
